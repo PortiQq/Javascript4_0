@@ -40,12 +40,29 @@ app.get('/math/rectangle/:width/:height', (req, res) => {
   };
 
   res.json(result);
-
-
 });
 
+app.get('/math/power/:base/:exponent', (req, res) => {
+  const base = parseFloat(req.params.base);
+  const exp = parseFloat(req.params.exponent);
+  const root = req.query.root === 'true';
 
-//TODO3
+  if (isNaN(base) || isNaN(exp)) {
+    return res.status(400).json({ error: 'Podaj poprawne parametry' });
+  }
+
+  const power = Math.pow(base, exp);
+
+  const result = {
+    result: power,
+  };
+
+  if (root) {
+    result.root = Math.sqrt(base);
+  }
+
+  res.json(result);
+});
 
 
 const PORT = process.env.PORT || 8000;
