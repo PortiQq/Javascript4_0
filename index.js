@@ -2,7 +2,11 @@
 
 const express = require('express');
 const app = express();
+const fs = require('fs');
+const path = require('path');
 
+
+//Zadanie 1
 app.get('/math/circle/:r', (req, res) => {
   const r = parseFloat(req.params.r);
 
@@ -22,7 +26,7 @@ app.get('/math/circle/:r', (req, res) => {
 });
 
 
-
+//Zadanie 2
 app.get('/math/rectangle/:width/:height', (req, res) => {
   const width = parseFloat(req.params.width);
   const height = parseFloat(req.params.height);
@@ -42,6 +46,7 @@ app.get('/math/rectangle/:width/:height', (req, res) => {
   res.json(result);
 });
 
+//Zadanie 3
 app.get('/math/power/:base/:exponent', (req, res) => {
   const base = parseFloat(req.params.base);
   const exp = parseFloat(req.params.exponent);
@@ -63,6 +68,40 @@ app.get('/math/power/:base/:exponent', (req, res) => {
 
   res.json(result);
 });
+
+//Zadanie 4
+//Załadowanie bazy żartów
+let jokesData;
+fs.readFile(path.join(__dirname, 'jokebook.json'), 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading jokebook.json:', err);
+    jokesData = { error: 'Could not load jokebook' };
+  } else {
+    jokesData = JSON.parse(data);
+  }
+});
+
+//Zadanie 5
+app.get('/jokebook/categories', (req, res) => { 
+  if (jokesData && jokesData.categories) {
+    res.json(jokesData.categories);
+  } else {
+    res.status(500).json({ error: 'Błąd pobrania kategorii' });
+  }
+});
+
+app.get('/jokebook/categories/:category', (req, res) => { 
+
+  const category = req.params.category;
+
+  if (jokesData && jokesData[category]) {
+    res.json(jokesData[category]);
+  } else {
+    res.status(500).json({ error: `No jokes for category ${category}` });
+  }
+});
+
+
 
 
 const PORT = process.env.PORT || 8000;
